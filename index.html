@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exp-3-lerenkijken</title>
+    <!-- Get all the required libraries -->
+    <script src="https://unpkg.com/jspsych@8.2.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-slider-response@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-browser-check@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-call-function@2.1.0"></script>
+
+    <link href="https://unpkg.com/jspsych@8.2.2/css/jspsych.css" rel="stylesheet" type="text/css" />  
+
+    <style> 
+        .jspsych-display-element {
+            font-size: 30px;
+        }
+        .jspsych-btn {
+            font-size: 30px;
+            border: 10px solid transparent;
+            border-radius: 16px;
+            color: #333;
+            background-color: #8ee86d8d;
+            border-color: #2f5920e9;
+            padding: 1px 60px;
+        }
+        .jspsych-slider::-webkit-slider-thumb {
+            border: 10px solid #2f5920e9;
+            height: 80px;
+            width: 80px;
+            border-radius: 40px;
+            background: #8ee86d8d;
+            margin-top: -20px;
+        }   
+        .jspsych-slider::-webkit-slider-runnable-track {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 60%;
+            height: 50px;
+            cursor: pointer;
+            background: #fff;
+            box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+            border-radius: 2px;
+            border: 5px solid #aaa;
+        }     
+
+        #jspsych-progressbar-container {
+            color: #000000e9;
+            border-bottom: 5px solid #2f5920e9;
+            background-color: #ffffff;
+        }
+
+        #jspsych-progressbar-container span {
+            font-size: 20px;
+            padding-right: 25px;
+        }
+
+        #jspsych-progressbar-outer {
+            background-color: #8ee86d8d;
+        }
+
+        #jspsych-progressbar-inner {
+            background-color: #2f5920e9;
+        }
+    </style>  
+  </head>
+  <body></body>
+  <script>
+
+    //Initialize jsPsysch
+    const jsPsych = initJsPsych({
+        show_progress_bar: true,
+        message_progress_bar: 'Progress',
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    });
+
+
+
+    // trial parameters
+    const person_presentation_time = 1000
+    const grid_presentation_time = 1000
+
+    
+
+
+    const preload = {
+        type: jsPsychPreload,
+    }
+
+    
+    
+
+    // subject id
+    const url_vars = jsPsych.data.urlVariables()
+    const user_info_trial = {
+        type: jsPsychBrowserCheck,
+        data: url_vars
+    };
+
+
+    // build trial sequence:
+    const intro = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: "<h3>Welcome to this visual search demo-experiment! v1</h3>",
+        choices: ["<p>Begin!</p>"],
+        data:{
+            label:'intro',
+        }
+    };
+    
+    let trial = {
+        type: jsPsychImageButtonResponse,
+        stimulus: 'animations/spinning_dancer.gif',
+        choices: ['It flipped!'],
+        stimulus_duration:2500,
+        trial_duration: 2500,
+        response_ends_trial: false,
+        render_on_canvas: false,
+        prompt: "<p>Press the button when you see dancer change direction!</p>"
+    };
+
+    // const debrief = {
+    //     type: jsPsychHtmlButtonResponse,
+    //     stimulus: function(){
+    //         let n_trials =jsPsych.data.get().filter({label: 'ask_presence'}).count()
+    //         let n_correct = jsPsych.data.get().filter({label: 'ask_presence', correct:1}).count()
+    //         let p_confidence = jsPsych.data.get().filter({label: 'ask_confidence'}).select('response').mean()
+    //         return "<h3>You are done. Thanks!</h3>"+
+    //         `<p>You answered ${n_correct} of ${n_trials} questions correctly.</p>`+
+    //          `<p>You were about ${Math.round(p_confidence)}% sure of your answers.</p>`+
+    //         "<p>Tap below to save your data to OSF! Or close this window instead.</p>"
+    //     },
+    //     save_trial_parameters:{stimulus:false},
+    //     choices: ["<p>Save data!</p>"],
+    //     data:{
+    //         label:'debrief',
+    //     },
+    //     on_start: function(){
+    //         jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
+    //     }
+    // };
+    // const outro = {
+    //     type: jsPsychHtmlKeyboardResponse,
+    //     stimulus: "<p>Your data was successfully saved!</p>"+
+    //     "<p>You may close this window now.</p>",
+    //     choices: 'NO_KEYS',
+    //     data:{
+    //         label:'outro',
+    //     },
+    //     on_start: function(){
+    //         jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
+    //     }
+    // };
+
+    const save_data = {
+        type: jsPsychCallFunction,
+        async: true,
+        func: function(done){
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://www.lerenkijken.nl/api/save');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+            if(xhr.status == 200){
+                var response = JSON.parse(xhr.responseText);
+                console.log(response.success);
+            }
+            else {
+                console.log(xhr.status)
+            }
+            done(); // invoking done() causes experiment to progress to next trial.
+            };
+            xhr.send(jsPsych.data.get().json());
+        }
+    }
+
+    let timeline = [trial, trial];
+
+    jsPsych.run(timeline);
+
+  </script>
+</html>
+
+
+
+
