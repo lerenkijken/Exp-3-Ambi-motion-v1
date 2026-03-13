@@ -15,7 +15,7 @@
     <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
     <script src="https://unpkg.com/@jspsych/plugin-browser-check@2.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-call-function@2.1.0"></script>
-    <script src="plugin-html-button-multi-response.js"></script>
+    <script src="plugin-image-button-multi-response.js"></script>
 
     <link href="https://unpkg.com/jspsych@8.2.2/css/jspsych.css" rel="stylesheet" type="text/css" />  
 
@@ -87,8 +87,7 @@
 
 
     // trial parameters
-    const person_presentation_time = 1000
-    const grid_presentation_time = 1000
+    const animation_presentation_time_seconds = 15
 
     
 
@@ -107,26 +106,45 @@
         data: url_vars
     };
 
-
     // build trial sequence:
-    const intro = {
+    const intro_1 = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: './animations/spinning_dancer.gif',
+        stimulus: 'Look at the animation (for '+animation_presentation_time_seconds+' sec) and tell us every time you see the direction change!',
         choices: ["<p>Begin!</p>"],
         data:{
             label:'intro',
         }
     };
     
-    let trial = {
-        type: jsPsychHtmlButtonMultiResponse,
-        stimulus: 'animations\spinning_dancer.gif',
-        choices:  ['<- LEFT',  'RIGHT ->'],// ['It flipped!'],
-        stimulus_duration:5000,
-        trial_duration: 5000,
+    let trial_1_button = {
+        type: jsPsychImageButtonMultiResponse,
+        stimulus: 'animations/spinning_dancer.gif',
+        choices:  ['It flipped!'],
+        stimulus_duration: animation_presentation_time_seconds   *1000,
+        trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
-        render_on_canvas: false,
-        prompt: "<p>Press the button when you see dancer change direction!</p>"
+        render_on_canvas:false,
+        prompt: "<p>Tap/click the button when you see dancer change direction!</p>"
+    };
+        
+    const intro_2 = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Look at the animation (for '+animation_presentation_time_seconds+' sec) and tell us the direction of motion you see!',
+        choices: ["<p>Begin!</p>"],
+        data:{
+            label:'intro',
+        }
+    };
+
+    let trial_2_button = {
+        type: jsPsychImageButtonMultiResponse,
+        stimulus: 'animations/spinning_dancer.gif',
+        choices:  ['⤾ LEFT',  'RIGHT ⤿'], 
+        stimulus_duration: animation_presentation_time_seconds   *1000,
+        trial_duration:  animation_presentation_time_seconds   *1000,
+        response_ends_trial: false,
+        render_on_canvas:false,
+        prompt: "<p>Tap/click when you see dancer change direction!</p>"
     };
 
     // const debrief = {
@@ -149,18 +167,18 @@
     //         jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
     //     }
     // };
-    // const outro = {
-    //     type: jsPsychHtmlKeyboardResponse,
-    //     stimulus: "<p>Your data was successfully saved!</p>"+
-    //     "<p>You may close this window now.</p>",
-    //     choices: 'NO_KEYS',
-    //     data:{
-    //         label:'outro',
-    //     },
-    //     on_start: function(){
-    //         jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
-    //     }
-    // };
+    const outro = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "<p>Well done that was the end </p>",
+        choices: 'NO_KEYS',
+        trial_duration: 1000,
+        data:{
+            label:'outro',
+        },
+        on_start: function(){
+            jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
+        }
+    };
 
     const save_data = {
         type: jsPsychCallFunction,
@@ -183,7 +201,7 @@
         }
     }
 
-    let timeline = [intro, trial, trial];
+    let timeline = [intro_1, trial_1_button, intro_2, trial_2_button ];
 
     jsPsych.run(timeline);
 

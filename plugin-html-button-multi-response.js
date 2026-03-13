@@ -70,7 +70,15 @@ var jsPsychHtmlButtonMultiResponse = (function (jspsych) {
       enable_button_after: {
         type: jspsych.ParameterType.INT,
         default: 0
-      }
+      },
+      /**
+       * If true, multiple responses are allowed (note that the default "response_ends_trial" is set to false)
+       * If false, only one response is registered.
+       */
+      allow_multiple_responses: {
+        type: jspsych.ParameterType.BOOL,
+        default: true
+      },
     },
     data: {
       /** The response time in milliseconds for the participant to make a response. The time is measured from when the stimulus first appears on the screen until the participant's response. */
@@ -149,9 +157,10 @@ var jsPsychHtmlButtonMultiResponse = (function (jspsych) {
 
       var start_time = performance.now();
 
+      // if multiple responses are allow make start with empty array, else with null
       var response = {
-        rt: [],
-        button: [],
+        rt: trial.allow_multiple_responses ? [] : null,
+        button: trial.allow_multiple_responses ? [] : null 
       };
 
 
@@ -169,17 +178,23 @@ var jsPsychHtmlButtonMultiResponse = (function (jspsych) {
         var end_time = performance.now();
         var rt = Math.round(end_time - start_time);
 
-        // response.button = parseInt(choice);
-        // response.rt = rt;
+        // if multiple reponses are allowed push each new response to data
+        if (trial.allow_multiple_responses){
+          response.button.push( parseInt(choice)) ;
+          response.rt.push(rt);
+        } else { // else set the values
+          response.button = parseInt(choice);
+          response.rt = rt;
+        }
 
-        response.button.push( parseInt(choice)) ;
-        response.rt.push(rt);
 
-        // stimulusElement.classList.add("responded");
-        // for (const button of buttonGroupElement.children) {
-        //   button.setAttribute("disabled", "disabled");
-        // }
-        
+        if (!trial.allow_multiple_responses){
+          stimulusElement.classList.add("responded");
+          for (const button of buttonGroupElement.children) {
+            button.setAttribute("disabled", "disabled");
+          }
+        }
+
         if (trial.response_ends_trial) {
           end_trial();
         }
@@ -211,6 +226,10 @@ var jsPsychHtmlButtonMultiResponse = (function (jspsych) {
       }
     }
 
+    /* 
+    NOTE THAT SIMULATION ARE NOT YET IMPLEMENTED FOR MULTIPLE RESPONSES. 
+    THE CODE FOR THE ORIGINAL SINGLE RESPONSE TRIALS IS LEFT UNCHANGED
+    */
     
     simulate(trial, simulation_mode, simulation_options, load_callback) {
       if (simulation_mode == "data-only") {
