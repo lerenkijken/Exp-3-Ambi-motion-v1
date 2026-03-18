@@ -100,7 +100,8 @@
     
 
     // subject id
-    const url_vars = jsPsych.data.urlVariables()
+    let url_vars = jsPsych.data.urlVariables()
+    url_vars["label"] = "user-info"
     const user_info_trial = {
         type: jsPsychBrowserCheck,
         data: url_vars
