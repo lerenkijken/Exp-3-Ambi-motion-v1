@@ -87,7 +87,7 @@
 
 
     // trial parameters
-    const animation_presentation_time_seconds = 15
+    const animation_presentation_time_seconds = 5 
 
     
 
@@ -116,36 +116,16 @@
             label:'intro',
         }
     };
-    
+     
     let trial_1_button = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/spinning_dancer.gif',
-        choices:  ['It flipped!'],
+        choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
-        prompt: "<p>Tap/click the button when you see dancer change direction!</p>"
-    };
-        
-    const intro_2 = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: 'Look at the animation (for '+animation_presentation_time_seconds+' sec) and tell us the direction of motion you see!',
-        choices: ["<p>Begin!</p>"],
-        data:{
-            label:'intro',
-        }
-    };
-
-    let trial_2_button = {
-        type: jsPsychImageButtonMultiResponse,
-        stimulus: 'animations/spinning_dancer.gif',
-        choices:  ['⤾ LEFT',  'RIGHT ⤿'], 
-        stimulus_duration: animation_presentation_time_seconds   *1000,
-        trial_duration:  animation_presentation_time_seconds   *1000,
-        response_ends_trial: false,
-        render_on_canvas:false,
-        prompt: "<p>Tap/click when you see dancer change direction!</p>"
+        prompt: "<p>Klik of druk kort op de knop elke keer als je de richting ziet veranderen.</p>"
     };
 
     // const debrief = {
@@ -189,20 +169,17 @@
             xhr.open('POST', 'https://www.lerenkijken.nl/api/save');
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = function() {
-            if(xhr.status == 200){
-                var response = JSON.parse(xhr.responseText);
-                console.log(response.success);
-            }
-            else {
-                console.log(xhr.status)
-            }
-            done(); // invoking done() causes experiment to progress to next trial.
+                if(xhr.status == 200){
+                    var response = JSON.parse(xhr.responseText);
+                    console.log(response.success);
+                }
+                done(); // invoking done() causes experiment to progress to next trial.
             };
             xhr.send(jsPsych.data.get().json());
         }
     }
 
-    let timeline = [user_info_trial, intro_1, trial_1_button, intro_2, trial_2_button, save_data ];
+    let timeline = [user_info_trial, intro_1, trial_1_button, intro_1, trial_1_button,  ]; // save_data
 
     jsPsych.run(timeline);
 

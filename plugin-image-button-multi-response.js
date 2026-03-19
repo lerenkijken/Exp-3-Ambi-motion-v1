@@ -118,6 +118,15 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * Type of event to register a response. With multiple allowed resonses, 
+       * it makes sense to register the mousedown event (rather than a full click). 
+       * This sting is passed to the button's addEventListener() function. 
+       */
+      event_listener_string: {
+        type: jspsych.ParameterType.STRING,
+        default: 'mousedown'
+      },
     },
     data: {
       /** The path of the image that was displayed. */
@@ -223,7 +232,7 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
         const buttonElement = buttonGroupElement.lastChild;
         buttonElement.dataset.choice = choiceIndex.toString();
-        buttonElement.addEventListener("click", () => {
+        buttonElement.addEventListener("mousedown", () => {  // use 'mousedown' to get the start time of the response. "click" fires after a "full click action" . 
           after_response(choiceIndex);
         });
       }
