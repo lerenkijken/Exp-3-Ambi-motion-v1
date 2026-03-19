@@ -148,6 +148,7 @@
     //         jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
     //     }
     // };
+    
     const outro = {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: "<p>Well done that was the end </p>",
@@ -179,7 +180,7 @@
         }
     }
 
-    let timeline = [user_info_trial, intro_1, trial_1_button, intro_1, trial_1_button,  ]; // save_data
+    let timeline = [user_info_trial, intro_1, trial_1_button, intro_1, trial_1_button,  save_data]; // save_data
 
     jsPsych.run(timeline);
 
