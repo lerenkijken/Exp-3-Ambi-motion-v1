@@ -18,59 +18,8 @@
     <script src="plugin-image-button-multi-response.js"></script>
 
     <link href="https://unpkg.com/jspsych@8.2.2/css/jspsych.css" rel="stylesheet" type="text/css" />  
-
-    <style> 
-        .jspsych-display-element {
-            font-size: 30px;
-        }
-        .jspsych-btn {
-            font-size: 30px;
-            border: 10px solid transparent;
-            border-radius: 16px;
-            color: #333;
-            background-color: #8ee86d8d;
-            border-color: #2f5920e9;
-            padding: 1px 60px;
-        }
-        .jspsych-slider::-webkit-slider-thumb {
-            border: 10px solid #2f5920e9;
-            height: 80px;
-            width: 80px;
-            border-radius: 40px;
-            background: #8ee86d8d;
-            margin-top: -20px;
-        }   
-        .jspsych-slider::-webkit-slider-runnable-track {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 60%;
-            height: 50px;
-            cursor: pointer;
-            background: #fff;
-            box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
-            border-radius: 2px;
-            border: 5px solid #aaa;
-        }     
-
-        #jspsych-progressbar-container {
-            color: #000000e9;
-            border-bottom: 5px solid #2f5920e9;
-            background-color: #ffffff;
-        }
-
-        #jspsych-progressbar-container span {
-            font-size: 20px;
-            padding-right: 25px;
-        }
-
-        #jspsych-progressbar-outer {
-            background-color: #8ee86d8d;
-        }
-
-        #jspsych-progressbar-inner {
-            background-color: #2f5920e9;
-        }
-    </style>  
+    <link rel="stylesheet" href="lerenkijken_style.css">
+ 
   </head>
   <body></body>
   <script>
@@ -84,20 +33,13 @@
         }
     });
 
-
-
     // trial parameters
-    const animation_presentation_time_seconds = 5 
-
-    
-
+    const animation_presentation_time_seconds = 30
+    const flash_duration_ms = 150
 
     const preload = {
         type: jsPsychPreload,
     }
-
-    
-    
 
     // subject id
     let url_vars = jsPsych.data.urlVariables()
@@ -107,48 +49,76 @@
         data: url_vars
     };
 
+    let get_device_info = () => jsPsych.data.get().filter({trial_type: "browser-check"})['trials'][0]
+
+
+
     // build trial sequence:
     const intro_1 = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: 'Kijk naar de animatie (voor '+animation_presentation_time_seconds+' sec) en laat het weten wanneer je de richting ziet veranderen!',
-        choices: ["<p>Begin!</p>"],
+        stimulus: 'Kijk naar de animatie (voor '+animation_presentation_time_seconds+' sec) en geef aan wanneer je de richting ziet veranderen!',
+        choices: ["Begin!"],
         data:{
             label:'intro',
         }
     };
      
-    let trial_1_button = {
+    let trial_1 = {
         type: jsPsychImageButtonMultiResponse,
-        stimulus: 'animations/spinning_dancer.gif',
+        stimulus: 'animations/Spinning_Dancer_(upscale).gif',
         choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        stimulus_height: () =>  get_device_info().height * 0.5,
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
-        prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
+        prompt: "Klik of druk op de knop elke keer als je de richting ziet veranderen."
     };
 
-    // const debrief = {
-    //     type: jsPsychHtmlButtonResponse,
-    //     stimulus: function(){
-    //         let n_trials =jsPsych.data.get().filter({label: 'ask_presence'}).count()
-    //         let n_correct = jsPsych.data.get().filter({label: 'ask_presence', correct:1}).count()
-    //         let p_confidence = jsPsych.data.get().filter({label: 'ask_confidence'}).select('response').mean()
-    //         return "<h3>You are done. Thanks!</h3>"+
-    //         `<p>You answered ${n_correct} of ${n_trials} questions correctly.</p>`+
-    //          `<p>You were about ${Math.round(p_confidence)}% sure of your answers.</p>`+
-    //         "<p>Tap below to save your data to OSF! Or close this window instead.</p>"
-    //     },
-    //     save_trial_parameters:{stimulus:false},
-    //     choices: ["<p>Save data!</p>"],
-    //     data:{
-    //         label:'debrief',
-    //     },
-    //     on_start: function(){
-    //         jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
-    //     }
-    // };
-    
+    const intro_2 = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Kijk nog eens de animatie (voor '+animation_presentation_time_seconds+' sec) en geef aan wanneer je de richting ziet veranderen!',
+        choices: ["Begin!"],
+        data:{
+            label:'intro',
+        }
+    };
+
+    let trial_2_third = {
+        type: jsPsychImageButtonMultiResponse,
+        stimulus: 'animations/Spinning_Dancer_(upscale).gif',
+        choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        stimulus_height: () =>  get_device_info().height * 0.5,
+        stimulus_duration: animation_presentation_time_seconds /3   *1000 - flash_duration_ms,
+        trial_duration:  animation_presentation_time_seconds /3   *1000,
+        response_ends_trial: false,
+        render_on_canvas:false,
+        prompt: "Klik of druk op de knop elke keer als je de richting ziet veranderen."
+    };
+
+    let trial_2 = {
+        timeline: [trial_2_third, trial_2_third, trial_2_third]
+    }
+
+
+    let trial_3_part = (dir) => {return {
+        type: jsPsychImageButtonMultiResponse,
+        stimulus: `animations/${dir}_spinning_dancer_unmarked.gif`,
+        choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        stimulus_height: () =>  get_device_info().height * 0.5,
+        stimulus_duration: animation_presentation_time_seconds / 3   *1000 ,
+        trial_duration:  animation_presentation_time_seconds / 3   *1000,
+        response_ends_trial: false,
+        render_on_canvas:false,
+        prompt: "Klik of druk op de knop elke keer als je de richting ziet veranderen."
+    }};
+
+    let trial_3_LRL = [trial_3_part('left'), trial_3_part('right'), trial_3_part('left')] 
+    let trial_3_RLR = [trial_3_part('right'), trial_3_part('left'), trial_3_part('right'),] 
+    let trial_3 = {
+        timeline: Math.random()<0.5 ? trial_3_LRL : trial_3_RLR
+    }
+
     const outro = {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: "<p>Well done that was the end </p>",
@@ -166,6 +136,7 @@
         type: jsPsychCallFunction,
         async: true,
         func: function(done){
+            try {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'https://www.lerenkijken.nl/api/save');
             xhr.setRequestHeader('Content-Type', 'application/json');
@@ -177,11 +148,14 @@
                 done(); // invoking done() causes experiment to progress to next trial.
             };
             xhr.send(jsPsych.data.get().json());
+            }   catch (error ) {
+                console.error();
+            }
+            done()
         }
     }
 
-    let timeline = [user_info_trial, intro_1, trial_1_button, intro_1, trial_1_button,  save_data]; // save_data
-
+    let timeline = [user_info_trial, intro_1, trial_1, intro_2, trial_2,intro_2, trial_3, save_data]; 
     jsPsych.run(timeline);
 
   </script>
