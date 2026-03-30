@@ -1,4 +1,10 @@
 
+html, body {
+  overscroll-behavior: none;
+      -webkit-user-select: none; /* Safari */
+            user-select: none;
+}
+
 .jspsych-display-element {
   font-size: 35px;
   color: black;
@@ -21,13 +27,22 @@
     font-family: Malington;
     -webkit-user-select: none; /* Safari */
             user-select: none; 
+    box-shadow: 0 0.4em #7e7e7e;
+    transition: 0.25s;
 }
 .jspsych-btn:hover {
   background-color: #2b00c8; 
+  color: white;
+  border-color: #2b00c8;
+}
+.jspsych-btn:active {
+  background-color: #2b00c8;
   border-color: #2b00c8;
   color: white;
+  box-shadow: 0 0.1em #444444;
+  transform: translateY(0.3em);
+  transition: 0.1s;
 }
-
 
 .jspsych-slider::-webkit-slider-thumb {
     border: 10px solid #2b00c8;

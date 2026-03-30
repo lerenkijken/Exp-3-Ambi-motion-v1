@@ -34,11 +34,12 @@
     });
 
     // trial parameters
-    const animation_presentation_time_seconds = 30
+    const animation_presentation_time_seconds = 6
     const flash_duration_ms = 150
 
     const preload = {
         type: jsPsychPreload,
+        images: ['animations/ambi_spinning_dancer.gif', 'animations/left_spinning_dancer.gif', 'animations/right_spinning_dancer.gif']
     }
 
     // subject id
@@ -65,14 +66,15 @@
      
     let trial_1 = {
         type: jsPsychImageButtonMultiResponse,
-        stimulus: 'animations/Spinning_Dancer_(upscale).gif',
+        stimulus: 'animations/ambi_spinning_dancer.gif',
         choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
         stimulus_height: () =>  get_device_info().height * 0.5,
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
-        prompt: "Klik of druk op de knop elke keer als je de richting ziet veranderen."
+        initiate_stimulus_after: 1000,
+        prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
     };
 
     const intro_2 = {
@@ -86,7 +88,7 @@
 
     let trial_2_third = {
         type: jsPsychImageButtonMultiResponse,
-        stimulus: 'animations/Spinning_Dancer_(upscale).gif',
+        stimulus: 'animations/ambi_spinning_dancer.gif',
         choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
         stimulus_height: () =>  get_device_info().height * 0.5,
         stimulus_duration: animation_presentation_time_seconds /3   *1000 - flash_duration_ms,
@@ -103,7 +105,7 @@
 
     let trial_3_part = (dir) => {return {
         type: jsPsychImageButtonMultiResponse,
-        stimulus: `animations/${dir}_spinning_dancer_unmarked.gif`,
+        stimulus: `animations/${dir}_spinning_dancer.gif`,
         choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
         stimulus_height: () =>  get_device_info().height * 0.5,
         stimulus_duration: animation_presentation_time_seconds / 3   *1000 ,
@@ -155,7 +157,7 @@
         }
     }
 
-    let timeline = [user_info_trial, intro_1, trial_1, intro_2, trial_2,intro_2, trial_3, save_data]; 
+    let timeline = [user_info_trial,trial_3, intro_1, trial_1, intro_2, trial_3, save_data]; 
     jsPsych.run(timeline);
 
   </script>

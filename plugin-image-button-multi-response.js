@@ -110,6 +110,11 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         type: jspsych.ParameterType.INT,
         default: 0
       },
+      /** How long after trial onset will the stimulus initiate in milliseconds. */ 
+      initiate_stimulus_after: {
+        type: jspsych.ParameterType.INT,
+        default: 0
+      },
       /**
        * If true, multiple responses are allowed (note that the default "response_ends_trial" is set to false)
        * If false, only one response is registered.
@@ -156,6 +161,10 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
       this.info = info;
     }
     trial(display_element, trial) {
+
+      var start_time = performance.now();
+      
+      
       const calculateImageDimensions = (image2) => {
         let width, height;
         if (trial.stimulus_height !== null) {
@@ -179,7 +188,9 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
       display_element.innerHTML = "";
       let stimulusElement;
       let canvas;
+      
       const image = trial.render_on_canvas ? new Image() : document.createElement("img");
+
       if (trial.render_on_canvas) {
         canvas = document.createElement("canvas");
         canvas.style.margin = "0";
@@ -188,6 +199,7 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
       } else {
         stimulusElement = image;
       }
+
       const drawImage = () => {
         const [width, height] = calculateImageDimensions(image);
         if (trial.render_on_canvas) {
@@ -199,17 +211,25 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
           image.style.height = `${height}px`;
         }
       };
+
+
+
       let hasImageBeenDrawn = false;
       image.onload = () => {
         if (!hasImageBeenDrawn) {
           drawImage();
         }
       };
+
       image.src = trial.stimulus;
+
       if (image.complete && image.naturalWidth !== 0) {
         drawImage();
         hasImageBeenDrawn = true;
       }
+
+
+
       stimulusElement.id = "jspsych-image-button-response-stimulus";
       display_element.appendChild(stimulusElement);
       const buttonGroupElement = document.createElement("div");
@@ -242,7 +262,7 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
       if (trial.prompt !== null) {
         display_element.insertAdjacentHTML("beforeend", trial.prompt);
       }
-      var start_time = performance.now();
+      
 
       // if multiple responses are allow make start with empty array, else with null
       var response = {
@@ -295,32 +315,42 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
           btns[i].removeAttribute("disabled");
         }
       }
+
+
       function disable_buttons() {
         var btns = document.querySelectorAll("#jspsych-image-button-response-btngroup button");
         for (var i = 0; i < btns.length; i++) {
           btns[i].setAttribute("disabled", "disabled");
         }
       }
+
+
       if (trial.enable_button_after > 0) {
         disable_buttons();
         this.jsPsych.pluginAPI.setTimeout(() => {
           enable_buttons();
         }, trial.enable_button_after);
       }
+
+
       if (trial.stimulus_duration !== null) {
         this.jsPsych.pluginAPI.setTimeout(() => {
           stimulusElement.style.visibility = "hidden";
         }, trial.stimulus_duration);
       }
+
+
       if (trial.trial_duration !== null) {
         this.jsPsych.pluginAPI.setTimeout(() => {
           end_trial();
         }, trial.trial_duration);
+
       } else if (trial.response_ends_trial === false) {
         console.warn(
           "The experiment may be deadlocked. Try setting a trial duration or set response_ends_trial to true."
         );
       }
+
     }
 
 
