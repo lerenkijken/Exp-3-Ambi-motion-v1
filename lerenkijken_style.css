@@ -28,7 +28,7 @@ html, body {
     -webkit-user-select: none; /* Safari */
             user-select: none; 
     box-shadow: 0 0.4em #7e7e7e;
-    transition: 0.25s;
+    transition: 0.15s;
 }
 .jspsych-btn:hover {
   background-color: #2b00c8; 
@@ -41,7 +41,7 @@ html, body {
   color: white;
   box-shadow: 0 0.1em #444444;
   transform: translateY(0.3em);
-  transition: 0.1s;
+  transition: 0.05s;
 }
 
 .jspsych-slider::-webkit-slider-thumb {

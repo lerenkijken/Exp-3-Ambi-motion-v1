@@ -33,6 +33,27 @@
         }
     });
 
+    
+    let exp_version = '0.0.3'
+    const exp_id = 'exp_3_v'+exp_version
+    
+    const url_vars = jsPsych.data.urlVariables()
+
+    url_vars['exp_version'] = exp_version
+    url_vars['exp_id'] = exp_id
+
+    const user_info_trial = {
+        type: jsPsychBrowserCheck,
+        data: url_vars
+    };
+
+    // theme colors
+    const theme_blue = '#2d00c8' 
+    const theme_yellow = '#ffcc00'
+    const theme_pink = '#ff6699' 
+    const theme_orange = '#fe9900' 
+
+
     // trial parameters
     const animation_presentation_time_seconds = 6
     const flash_duration_ms = 150
@@ -42,13 +63,6 @@
         images: ['animations/ambi_spinning_dancer.gif', 'animations/left_spinning_dancer.gif', 'animations/right_spinning_dancer.gif']
     }
 
-    // subject id
-    let url_vars = jsPsych.data.urlVariables()
-    url_vars["label"] = "user-info"
-    const user_info_trial = {
-        type: jsPsychBrowserCheck,
-        data: url_vars
-    };
 
     let get_device_info = () => jsPsych.data.get().filter({trial_type: "browser-check"})['trials'][0]
 
@@ -57,7 +71,8 @@
     // build trial sequence:
     const intro_1 = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: 'Kijk naar de animatie (voor '+animation_presentation_time_seconds+' sec) en geef aan wanneer je de richting ziet veranderen!',
+        stimulus: `<h2>Welkom - ${exp_version}</h2>`+
+        'Kijk naar de animatie (voor '+animation_presentation_time_seconds+' sec) en geef aan wanneer je de richting ziet veranderen!',
         choices: ["Begin!"],
         data:{
             label:'intro',
@@ -157,7 +172,7 @@
         }
     }
 
-    let timeline = [user_info_trial,trial_3, intro_1, trial_1, intro_2, trial_3, save_data]; 
+    let timeline = [user_info_trial, intro_1,trial_3,  trial_1, intro_2, trial_3, save_data]; 
     jsPsych.run(timeline);
 
   </script>
