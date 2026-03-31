@@ -18,7 +18,7 @@
     <script src="plugin-image-button-multi-response.js"></script>
 
     <link href="https://unpkg.com/jspsych@8.2.2/css/jspsych.css" rel="stylesheet" type="text/css" />  
-    <link rel="stylesheet" href="lerenkijken_style.css">
+    <link rel="stylesheet" href="lerenkijken_style_exp3.css">
  
   </head>
   <body></body>
@@ -29,15 +29,20 @@
         show_progress_bar: true,
         message_progress_bar: 'Progress',
         on_finish: function() {
-            jsPsych.data.displayData();
+           //jsPsych.data.displayData('json');
+           window.location.href = 'https://lerenkijken.nl/';
         }
     });
 
     
-    let exp_version = '0.0.3'
+    let exp_version = '0.1.2'
     const exp_id = 'exp_3_v'+exp_version
     
     const url_vars = jsPsych.data.urlVariables()
+
+    const exp_start_datetime = Date.now()
+    url_vars['exp_start_datetime'] = Date(exp_start_datetime)
+    url_vars['exp_start_UTCms'] = exp_start_datetime
 
     url_vars['exp_version'] = exp_version
     url_vars['exp_id'] = exp_id
@@ -54,13 +59,16 @@
     const theme_orange = '#fe9900' 
 
 
-    // trial parameters
-    const animation_presentation_time_seconds = 6
+
+
+    // trial parameters & exp info
+    const animation_presentation_time_seconds = 9*3
     const flash_duration_ms = 150
+    const button_text = 'De richting veranderde!'
 
     const preload = {
         type: jsPsychPreload,
-        images: ['animations/ambi_spinning_dancer.gif', 'animations/left_spinning_dancer.gif', 'animations/right_spinning_dancer.gif']
+        images: ['animations/ambi_spinning_dancer.gif', 'animations/left_spinning_dancer.gif', 'animations/right_spinning_dancer.gif', 'animations/ambi_train.gif', 'animations/ambi_lissaj.gif']
     }
 
 
@@ -72,17 +80,31 @@
     const intro_1 = {
         type: jsPsychHtmlButtonResponse,
         stimulus: `<h2>Welkom - ${exp_version}</h2>`+
-        'Kijk naar de animatie (voor '+animation_presentation_time_seconds+' sec) en geef aan wanneer je de richting ziet veranderen!',
+        'Je gaat zo naar een animatie kijken (voor ~30 sec).<br>Jij moet aangeven als je de <i>bewegingsrichting<i> ziet veranderen!',
         choices: ["Begin!"],
         data:{
             label:'intro',
         }
     };
-     
-    let trial_1 = {
+
+    const intro_2 = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Bekijk de animatie nog eens en geef het opnieuw elke keer aan als je de richting ziet veranderen!',
+        choices: ["Begin!"],
+        data:{
+            label:'intro',
+        }
+    };
+
+
+
+    //////////////////////////////////////
+    // DANCER TRIALS
+    /////////////////////////////////////
+    let dancer_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/ambi_spinning_dancer.gif',
-        choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
         stimulus_height: () =>  get_device_info().height * 0.5,
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
@@ -92,36 +114,10 @@
         prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
     };
 
-    const intro_2 = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: 'Kijk nog eens de animatie (voor '+animation_presentation_time_seconds+' sec) en geef aan wanneer je de richting ziet veranderen!',
-        choices: ["Begin!"],
-        data:{
-            label:'intro',
-        }
-    };
-
-    let trial_2_third = {
-        type: jsPsychImageButtonMultiResponse,
-        stimulus: 'animations/ambi_spinning_dancer.gif',
-        choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
-        stimulus_height: () =>  get_device_info().height * 0.5,
-        stimulus_duration: animation_presentation_time_seconds /3   *1000 - flash_duration_ms,
-        trial_duration:  animation_presentation_time_seconds /3   *1000,
-        response_ends_trial: false,
-        render_on_canvas:false,
-        prompt: "Klik of druk op de knop elke keer als je de richting ziet veranderen."
-    };
-
-    let trial_2 = {
-        timeline: [trial_2_third, trial_2_third, trial_2_third]
-    }
-
-
-    let trial_3_part = (dir) => {return {
+    let dancer_trial_disambi_partial = (dir) => {return {
         type: jsPsychImageButtonMultiResponse,
         stimulus: `animations/${dir}_spinning_dancer.gif`,
-        choices:  ['De richting switchte!'],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
         stimulus_height: () =>  get_device_info().height * 0.5,
         stimulus_duration: animation_presentation_time_seconds / 3   *1000 ,
         trial_duration:  animation_presentation_time_seconds / 3   *1000,
@@ -130,17 +126,65 @@
         prompt: "Klik of druk op de knop elke keer als je de richting ziet veranderen."
     }};
 
-    let trial_3_LRL = [trial_3_part('left'), trial_3_part('right'), trial_3_part('left')] 
-    let trial_3_RLR = [trial_3_part('right'), trial_3_part('left'), trial_3_part('right'),] 
-    let trial_3 = {
-        timeline: Math.random()<0.5 ? trial_3_LRL : trial_3_RLR
+    let dancer_trial_disambi_LRL = [dancer_trial_disambi_partial('left'), dancer_trial_disambi_partial('right'), dancer_trial_disambi_partial('left')] 
+    let dancer_trial_disambi_RLR = [dancer_trial_disambi_partial('right'), dancer_trial_disambi_partial('left'), dancer_trial_disambi_partial('right'),] 
+
+    let dancer_trial_disambi = {
+        timeline: Math.random()<0.5 ? dancer_trial_disambi_LRL : dancer_trial_disambi_RLR
     }
 
+    let procedure_dancer = {
+        timeline: [intro_1,  dancer_trial_ambi, intro_2, dancer_trial_disambi], 
+    }
+
+
+    //////////////////////////////////////
+    // END DANCER TRIALS
+    /////////////////////////////////////
+
+
+    let train_trial_ambi = {
+        type: jsPsychImageButtonMultiResponse,
+        stimulus: 'animations/ambi_train.gif',
+        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        stimulus_height: () =>  get_device_info().height * 0.5,
+        stimulus_duration: animation_presentation_time_seconds   *1000,
+        trial_duration:  animation_presentation_time_seconds   *1000,
+        response_ends_trial: false,
+        render_on_canvas:false,
+        initiate_stimulus_after: 1000,
+        prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
+    };
+
+    let procedure_train = {
+        timeline: [intro_1,  train_trial_ambi, intro_2, train_trial_ambi], 
+    }
+
+    let lissaj_trial_ambi = {
+        type: jsPsychImageButtonMultiResponse,
+        stimulus: 'animations/ambi_lissaj.gif',
+        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        stimulus_height: () =>  get_device_info().height * 0.5,
+        stimulus_duration: animation_presentation_time_seconds   *1000,
+        trial_duration:  animation_presentation_time_seconds   *1000,
+        response_ends_trial: false,
+        render_on_canvas:false,
+        initiate_stimulus_after: 1000,
+        prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
+    };
+
+    let procedure_lissaj = {
+        timeline: [intro_1,  lissaj_trial_ambi, intro_2, lissaj_trial_ambi], 
+    }
+
+
+
+
+
     const outro = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: "<p>Well done that was the end </p>",
-        choices: 'NO_KEYS',
-        trial_duration: 1000,
+        type: jsPsychHtmlButtonResponse,
+        stimulus: ()=>{return `<h2>Dat was 'm! Hoe vond je het?</h2>`},
+        choices: ['Terug naar de homepage!'],
         data:{
             label:'outro',
         },
@@ -172,8 +216,37 @@
         }
     }
 
-    let timeline = [user_info_trial, intro_1,trial_3,  trial_1, intro_2, trial_3, save_data]; 
-    jsPsych.run(timeline);
+    let procedure = get_rand_from_array([procedure_dancer, procedure_train, procedure_lissaj])
+
+    let timeline = [user_info_trial, preload, procedure,  save_data, outro]; 
+    jsPsych.run(timeline); 
+
+
+    // utility functions
+     // extra utility functions
+    function get_rand_rgb_str(){
+        return `rgb(${Math.round(Math.random()*255)}, ${Math.round(Math.random()*255)}, ${Math.round(Math.random()*255)})`
+    }
+
+    function get_rand_int(min, max) { 
+        // get radom integer value between min max, both inclusive
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    
+    function get_rand_from_array(array) {
+        let i = get_rand_int(0, array.length - 1)
+        return array[i]
+    }
+    
+    function get_rand_float(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function get_dist(x1, y1, x2, y2) {
+        return ( (x2-x1)**2 + (y2-y1)**2 )**0.5
+    }
 
   </script>
 </html>
