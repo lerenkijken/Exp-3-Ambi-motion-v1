@@ -39,8 +39,9 @@
     });
 
     
-    let exp_version = '0_2_0'
+    let exp_version = '0_2_1'
     const exp_id = 'exp_3_v'+exp_version
+    console.log("Exp id: ", exp_id)
     
     const url_vars = jsPsych.data.urlVariables()
 
@@ -81,7 +82,7 @@
     // build trial sequence:
     const intro_1 = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: `<h2>Welkom - ${exp_version}</h2>`+
+        stimulus: `<h2>Welkom!</h2>`+
         'Je gaat zo naar een animatie kijken (voor ~30 sec).<br>Geeft de hele tijd aan welke bewegingsrichting jij ziet!',
         choices: ["Begin!"],
         data:{
@@ -211,7 +212,7 @@
     let dancer_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/ambi_spinning_dancer.gif',
-        choices:   ['⤾ Linksom',  'Rechtsom ⤿'], 
+        choices:   ['<b>⤾</b> Linksom',  'Rechtsom <b>⤿</b>'], 
         stimulus_height: () => {
            if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
             return  get_device_info().height * 0.6
@@ -223,7 +224,7 @@
            if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
             return null
            } else {
-            return get_device_info().width * 0.95
+            return get_device_info().width * 0.75
            }
         },
         stimulus_duration: animation_presentation_time_seconds   *1000,
@@ -237,7 +238,7 @@
     let dancer_trial_disambi_partial = (dir) => {return {
         type: jsPsychImageButtonMultiResponse,
         stimulus: `animations/${dir}_spinning_dancer.gif`,
-        choices:   ['⤾ Linksom',  'Rechtsom ⤿'], 
+        choices:   ['<b>⤾</b> Linksom',  'Rechtsom <b>⤿</b>'], 
         stimulus_height: () => {
            if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
             return  get_device_info().height * 0.6
@@ -249,7 +250,7 @@
            if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
             return null
            } else {
-            return get_device_info().width * 0.85
+            return get_device_info().width * 0.75
            }
         },
         stimulus_duration: (animation_presentation_time_seconds / 3)   *1000 ,
@@ -282,8 +283,21 @@
     let train_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/ambi_train.gif',
-        choices: ['↖ van mij AF',  'naar mij TOE ↘'], 
-        stimulus_height: () =>  get_device_info().height * 0.5,
+        choices: ['<b>↖</b> van mij AF',  'naar mij TOE <b>↘</b>'], 
+        stimulus_height: () => {
+           if (  (get_device_info().width /  get_device_info().height) > trian_aspect_rat ) {
+            return  get_device_info().height * 0.6
+           } else {
+            return null
+           }
+        } ,
+        stimulus_width: () => {
+           if (  (get_device_info().width /  get_device_info().height) > trian_aspect_rat ) {
+            return null
+           } else {
+            return get_device_info().width * 0.75
+           }
+        },
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
@@ -300,14 +314,27 @@
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/p5_lissajous.gif',
         choices:  [
-            '', '↑ Omhoog ↑', '', 
-            '⤾ Linksom', '', 'Rechtsom ⤿',
-            '', '↓ Omlaag ↓', '', 
+            '', '<b>↑</b> Omhoog <b>↑</b>', '', 
+            '<b>⤾</b> Linksom', '', 'Rechtsom <b>⤿</b>',
+            '', '<b>↓</b> Omlaag <b>↓</b>', '', 
         ], 
         enabeled_buttons: [0,1,0,   1,0,1,   0,1,0],
         grid_rows: 3,
         grid_columns: 3,
-        stimulus_width: () =>  get_device_info().width * 0.8,
+        stimulus_height: () => {
+           if (  (get_device_info().width /  get_device_info().height) > trian_aspect_rat ) {
+            return  get_device_info().height * 0.4
+           } else {
+            return null
+           }
+        } ,
+        stimulus_width: () => {
+           if (  (get_device_info().width /  get_device_info().height) > trian_aspect_rat ) {
+            return null
+           } else {
+            return get_device_info().width * 0.75
+           }
+        },
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,

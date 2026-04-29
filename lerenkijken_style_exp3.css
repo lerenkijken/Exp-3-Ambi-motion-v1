@@ -44,10 +44,18 @@ html, body {
 }
 
 .jspsych-btn:disabled:hover {
-  background-color: #eee;
-  color: #aaa;
-  border-color: #ccc;
+  background-color: #000000;
+  color: #000000;
+  border-color: #000000;
+  box-shadow: 0 0em #000000;
 }
+.jspsych-btn:disabled {
+  background-color: #000000;
+  color: #000000;
+  border-color: #000000;
+  box-shadow: 0 0em  #000000;
+}
+
 
 .jspsych-btn:active {
   background-color: #2b00c8;
