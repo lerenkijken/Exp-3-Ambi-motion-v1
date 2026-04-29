@@ -39,7 +39,7 @@
     });
 
     
-    let exp_version = '0_2_1'
+    let exp_version = '0_2_2'
     const exp_id = 'exp_3_v'+exp_version
     console.log("Exp id: ", exp_id)
     
@@ -66,6 +66,11 @@
     // trial parameters & exp info
     const animation_presentation_time_seconds =  9*3
     const flash_duration_ms = 150
+
+    const iframe_dancer = ``
+    const iframe_train = ``
+    const iframe_lissaj = ``
+    const iframe_horse = ``
 
 
     let get_device_info = () => jsPsych.data.get().filter({trial_type: "browser-check"})['trials'][0]
