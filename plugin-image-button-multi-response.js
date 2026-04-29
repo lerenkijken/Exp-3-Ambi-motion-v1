@@ -110,6 +110,11 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         type: jspsych.ParameterType.INT,
         default: 0
       },
+      /** An array of bools that sets whether buttons are active or not.*/ 
+      enabeled_buttons: {
+        type: jspsych.ParameterType.INT,
+        default: null
+      },
       /** How long after trial onset will the stimulus initiate in milliseconds. */ 
       initiate_stimulus_after: {
         type: jspsych.ParameterType.INT,
@@ -330,6 +335,16 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         this.jsPsych.pluginAPI.setTimeout(() => {
           enable_buttons();
         }, trial.enable_button_after);
+      }
+            
+      if (trial.enabeled_buttons !== null) {
+        var btns = document.querySelectorAll("#jspsych-image-button-response-btngroup button");
+        for (var i = 0; i < btns.length; i++) {
+          if (trial.enabeled_buttons[i]) {
+            btns[i].removeAttribute("disabled")
+          } else
+            btns[i].setAttribute("disabled", "disabled");
+          }
       }
 
 

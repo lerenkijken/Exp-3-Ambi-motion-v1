@@ -6,19 +6,23 @@ html, body {
 }
 
 .jspsych-display-element {
-  font-size: 35px;
+  /* font-size: 35px; */
   background-color: black;
   color: white;
 }
 
 .jspsych-content {
-  font-size: 35px;
+  /* font-size: 35px; */
   background-color: black;
   color: white;
+  position: fixed;
+  top: 5%;
+  left: 50%; 
+  transform: translateX(-50%);
 }
 
 .jspsych-btn {
-    font-size: 30px;
+    /* font-size: 30px; */
     border: 10px solid transparent;
     border-radius: 16px;
     color: white;
@@ -30,11 +34,21 @@ html, body {
     box-shadow: 0 0.4em #7e7e7e;
     transition: 0.15s;
 }
-.jspsych-btn:hover {
-  background-color: #2b00c8; 
-  color: white;
-  border-color: #2b00c8;
+
+@media (hover: hover) {
+  .jspsych-btn:hover {
+    background-color: #2b00c8; 
+    color: white;
+    border-color: #2b00c8;
+  }
 }
+
+.jspsych-btn:disabled:hover {
+  background-color: #eee;
+  color: #aaa;
+  border-color: #ccc;
+}
+
 .jspsych-btn:active {
   background-color: #2b00c8;
   border-color: #2b00c8;

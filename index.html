@@ -15,9 +15,13 @@
     <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
     <script src="https://unpkg.com/@jspsych/plugin-browser-check@2.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-call-function@2.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-canvas-button-response@2.1.0"></script>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+
     <script src="plugin-image-button-multi-response.js"></script>
 
     <link href="https://unpkg.com/jspsych@8.2.2/css/jspsych.css" rel="stylesheet" type="text/css" />  
+    
     <link rel="stylesheet" href="lerenkijken_style_exp3.css">
  
   </head>
@@ -26,16 +30,16 @@
 
     //Initialize jsPsysch
     const jsPsych = initJsPsych({
-        show_progress_bar: true,
-        message_progress_bar: 'Progress',
+        // show_progress_bar: true,
+        // message_progress_bar: 'Progress',
         on_finish: function() {
-           //jsPsych.data.displayData('json');
-           window.location.href = 'https://lerenkijken.nl/';
+           // jsPsych.data.displayData('json');
+           // window.location.href = 'https://lerenkijken.nl/';
         }
     });
 
     
-    let exp_version = '0.1.2'
+    let exp_version = '0_2_0'
     const exp_id = 'exp_3_v'+exp_version
     
     const url_vars = jsPsych.data.urlVariables()
@@ -58,29 +62,27 @@
     const theme_pink = '#ff6699' 
     const theme_orange = '#fe9900' 
 
-
-
-
     // trial parameters & exp info
-    const animation_presentation_time_seconds = 9*3
+    const animation_presentation_time_seconds =3 // 9*3
     const flash_duration_ms = 150
-    const button_text = 'De richting veranderde!'
-
-    const preload = {
-        type: jsPsychPreload,
-        images: ['animations/ambi_spinning_dancer.gif', 'animations/left_spinning_dancer.gif', 'animations/right_spinning_dancer.gif', 'animations/ambi_train.gif', 'animations/ambi_lissaj.gif']
-    }
 
 
     let get_device_info = () => jsPsych.data.get().filter({trial_type: "browser-check"})['trials'][0]
-
+    
+    const dancer_dims = [360, 480]
+    const lissaj_dims = [782, 391]
+    const  trian_dims =  [500, 322]
+    
+    const dancer_aspect_rat = 360 / 480
+    const lissaj_aspect_rat = 782 / 391
+    const  trian_aspect_rat = 500 / 322
 
 
     // build trial sequence:
     const intro_1 = {
         type: jsPsychHtmlButtonResponse,
         stimulus: `<h2>Welkom - ${exp_version}</h2>`+
-        'Je gaat zo naar een animatie kijken (voor ~30 sec).<br>Jij moet aangeven als je de <i>bewegingsrichting<i> ziet veranderen!',
+        'Je gaat zo naar een animatie kijken (voor ~30 sec).<br>Geeft de hele tijd aan welke bewegingsrichting jij ziet!',
         choices: ["Begin!"],
         data:{
             label:'intro',
@@ -96,34 +98,165 @@
         }
     };
 
+   
+    const preload_with_call = {
+        type: jsPsychCallFunction,
+        async: true,
+        func: function(done){
+            preload_start_timestamp = performance.now();
+            
+            jsPsych.pluginAPI.preloadImages(
+                stims_to_preload, callback_complete = () =>{
+                preload_finish_timestamp = performance.now()
+                console.log("Preloanding took "+ ((preload_finish_timestamp - preload_start_timestamp)/1000).toFixed(2) + ' seconds' )
+            }
+            )
+            done()
+        },
+    } 
 
 
+/*
+    //////////////////////////////////////
+    // p5 trial
+    /////////////////////////////////////
+    
+    // let p5_trial = {
+    //         type: jsPsychCanvasButtonResponse,
+    //         canvas_size: [400, 400],
+    //         choices: ['Veilig'],
+    //         stimulus: function (c) {
+
+
+
+    //         // set up p5 js  setup and draw functions
+    //         function p5js_sketch() {
+    //             // lissajous curve parameters
+    //             let t = 0;
+    //             let phase_shift;
+    //             let init_phase = 0;
+    //             let rotations_per_sec = 1 
+    //             let frames_per_cycle = 200
+    //             let a = 2
+    //             let b = 3
+    //             let fig_width = 400
+    //             let fig_height = 200
+    //             let line_width = 20
+    //             let line_dot_count = 900
+    //             let bg_color =  'white' 
+    //             let fig_color ='black'
+
+    //             function setup() {
+    //             createCanvas(600, 300);
+    //             rectMode(CENTER)
+    //             // saveGif('p5_lissajous', frames_per_cycle, {'units':'frames'})
+    //             }
+
+    //             function draw() {
+    //                 background(bg_color)
+                    
+    //                 noStroke()
+    //                 translate(width/2, height/2)
+                    
+    //                 // phase = init_phase + frameCount * cycles_per_60_frames * TAU
+    //                 phase = map(frameCount%frames_per_cycle, 0, frames_per_cycle, 0, TAU)
+                    
+    //                 for (let i = 0; i < line_dot_count; i++) {
+                        
+    //                     let loc_on_curve = map(i, 0, line_dot_count, 0, TAU)
+                        
+    //                     x = 0.5 * fig_width  * cos(a*loc_on_curve + phase);
+    //                     y = 0.5 * fig_height * sin(b*loc_on_curve + phase);
+                        
+    //                     // forces 'spinning' left or right
+    //                     fig_color = color(fig_color)
+    //                     let alpha_value_spin_L = map( sin((loc_on_curve*a+phase)), -1, 1, 20,250)
+    //                     let alpha_value_spin_R = map( sin((loc_on_curve*a+phase)),  1,-1, 20,250)
+                        
+    //                     // forces 'rolling' up or down
+    //                     let alpha_value_roll_U = map( cos((loc_on_curve*b+phase)), -1, 1, 20,250)
+    //                     let alpha_value_roll_D = map( cos((loc_on_curve*b+phase)),  1,-1, 20,250)
+                        
+    //                     fig_color.setAlpha(alpha_value_roll_U)
+                        
+    //                     // color the figure
+    //                     // fig_color.setRed( map(y, height/2-fig_height/2, height/2+fig_height/2, 120,255))
+    //                     // fig_color.setBlue(map(x, width /2-fig_width /2, width /2+fig_width /2, 120,255))
+    //                     // fig_color.setGreen(30)
+
+                        
+
+    //                     fill(fig_color)
+                        
+    //                     circle(x, y, line_width);  	
+    //                 }
+                                    
+
+    //             }
+    //                         }
+            
+    //         // place the p5 js canvas in the designated div
+    //         new p5(p5js_sketch, c)
+
+    //         },
+    //     }
+
+*/
+    
     //////////////////////////////////////
     // DANCER TRIALS
     /////////////////////////////////////
+
+
     let dancer_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/ambi_spinning_dancer.gif',
-        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
-        stimulus_height: () =>  get_device_info().height * 0.5,
+        choices:   ['⤾ Linksom',  'Rechtsom ⤿'], 
+        stimulus_height: () => {
+           if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
+            return  get_device_info().height * 0.6
+           } else {
+            return null
+           }
+        } ,
+        stimulus_width: () => {
+           if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
+            return null
+           } else {
+            return get_device_info().width * 0.95
+           }
+        },
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
         initiate_stimulus_after: 1000,
-        prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
+        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>"
     };
 
     let dancer_trial_disambi_partial = (dir) => {return {
         type: jsPsychImageButtonMultiResponse,
         stimulus: `animations/${dir}_spinning_dancer.gif`,
-        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
-        stimulus_height: () =>  get_device_info().height * 0.5,
-        stimulus_duration: animation_presentation_time_seconds / 3   *1000 ,
-        trial_duration:  animation_presentation_time_seconds / 3   *1000,
+        choices:   ['⤾ Linksom',  'Rechtsom ⤿'], 
+        stimulus_height: () => {
+           if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
+            return  get_device_info().height * 0.6
+           } else {
+            return null
+           }
+        } ,
+        stimulus_width: () => {
+           if (  (get_device_info().width /  get_device_info().height) > dancer_aspect_rat ) {
+            return null
+           } else {
+            return get_device_info().width * 0.85
+           }
+        },
+        stimulus_duration: (animation_presentation_time_seconds / 3)   *1000 ,
+        trial_duration:  (animation_presentation_time_seconds / 3)   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
-        prompt: "Klik of druk op de knop elke keer als je de richting ziet veranderen."
+        prompt: "Geeft de hele tijd aan welke bewegingsrichting jij ziet!"
     }};
 
     let dancer_trial_disambi_LRL = [dancer_trial_disambi_partial('left'), dancer_trial_disambi_partial('right'), dancer_trial_disambi_partial('left')] 
@@ -143,17 +276,20 @@
     /////////////////////////////////////
 
 
+                
+
+
     let train_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/ambi_train.gif',
-        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
+        choices: ['↖ van mij AF',  'naar mij TOE ↘'], 
         stimulus_height: () =>  get_device_info().height * 0.5,
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
         initiate_stimulus_after: 1000,
-        prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
+        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>"
     };
 
     let procedure_train = {
@@ -162,15 +298,22 @@
 
     let lissaj_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
-        stimulus: 'animations/ambi_lissaj.gif',
-        choices:  [button_text],  /// ['⤾ LEFT',  'RIGHT ⤿'], 
-        stimulus_height: () =>  get_device_info().height * 0.5,
+        stimulus: 'animations/p5_lissajous.gif',
+        choices:  [
+            '', '↑ Omhoog ↑', '', 
+            '⤾ Linksom', '', 'Rechtsom ⤿',
+            '', '↓ Omlaag ↓', '', 
+        ], 
+        enabeled_buttons: [0,1,0,   1,0,1,   0,1,0],
+        grid_rows: 3,
+        grid_columns: 3,
+        stimulus_width: () =>  get_device_info().width * 0.8,
         stimulus_duration: animation_presentation_time_seconds   *1000,
         trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
         initiate_stimulus_after: 1000,
-        prompt: "<p>Klik of druk op de knop elke keer als je de richting ziet veranderen.</p>"
+        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>"
     };
 
     let procedure_lissaj = {
@@ -181,16 +324,24 @@
 
 
 
-    const outro = {
+    const debrief = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: ()=>{return `<h2>Dat was 'm! Hoe vond je het?</h2>`},
-        choices: ['Terug naar de homepage!'],
+        stimulus: `<h2>Dat was 'm! Lukte het jou om verschillende richtingen te zien?</h2>
+        <p>Probeer het nog eens! Er zijn 3 verschillende animaties te ontdekken!</p>`,
+        grid_rows: 2,
+        choices: ["Probeer het nog eens!", "Doe een ander Experiment"] ,
         data:{
-            label:'outro',
+            label:'debrief',
         },
-        on_start: function(){
-            jsPsych.progressBar.progress = 1; // set progress bar to 100% full.
-        }
+        on_finish: function(){
+            let resp_idx = jsPsych.data.get().last().select('response').values[0]
+            if (resp_idx == 0){
+                window.top.location.href = 'https://lerenkijken.nl/experiment/welke-kant-gaat-die-op'
+            }
+            if (resp_idx == 1){
+                window.top.location.href = 'https://lerenkijken.nl/#experimenten' ;
+            }
+        },
     };
 
     const save_data = {
@@ -198,27 +349,51 @@
         async: true,
         func: function(done){
             try {
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://www.lerenkijken.nl/api/save');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
-                if(xhr.status == 200){
-                    var response = JSON.parse(xhr.responseText);
-                    console.log(response.success);
-                }
-                done(); // invoking done() causes experiment to progress to next trial.
-            };
-            xhr.send(jsPsych.data.get().json());
-            }   catch (error ) {
-                console.error();
+                window.xhr = $.post('https://www.lerenkijken.nl/api/save', jsPsych.data.get().json()).done(function(){
+                    if(xhr.status == 200){
+                        done()
+                    } else{
+                        console.log(xhr.status);
+                        done()
+                    }
+                }).fail(function(){
+                    console.log(xhr.status);
+                    done()
+                });
+            } catch (error){
+                console.error(error);
+                done()
             }
-            done()
-        }
+           
+        },
+        // on_start: function(){
+        //     // write summary data to the first object
+        //     let summary_object = {}   
+
+        //     let n_trials = jsPsych.data.get().filter({label: 'ask_presence'}).count()
+        //     let n_correct = jsPsych.data.get().filter({label: 'ask_presence', correct:1}).count()
+            
+        //     summary_object.mean_accuracy = n_correct / n_trials
+
+        //     summary_object.mean_confidence = jsPsych.data.get().filter({label: 'ask_confidence'}).select('response').mean() 
+            
+
+        //     jsPsych.data.get().first(1).values()[0]['user_summary_info'] = summary_object
+        // },
     }
+    
+    // choose between pp procedure and preload required items
+    let procedure_idx = get_rand_int(0,2)
 
-    let procedure = get_rand_from_array([procedure_dancer, procedure_train, procedure_lissaj])
+    let dancer_stims = ['animations/ambi_spinning_dancer.gif', 'animations/left_spinning_dancer.gif', 'animations/right_spinning_dancer.gif']
+    let trian_stims = ['animations/ambi_train.gif']
+    let lissaj_stims= ['animations/p5_lissajous.gif']
 
-    let timeline = [user_info_trial, preload, procedure,  save_data, outro]; 
+
+    let stims_to_preload = [dancer_stims,     trian_stims,     lissaj_stims    ][procedure_idx]
+    let procedure        = [procedure_dancer, procedure_train, procedure_lissaj][procedure_idx]
+
+    let timeline = [user_info_trial, preload_with_call, procedure,  save_data, debrief]; 
     jsPsych.run(timeline); 
 
 
