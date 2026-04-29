@@ -39,7 +39,7 @@
     });
 
     
-    let exp_version = '0_2_2'
+    let exp_version = '0_3_0'
     const exp_id = 'exp_3_v'+exp_version
     console.log("Exp id: ", exp_id)
     
@@ -54,7 +54,12 @@
 
     const user_info_trial = {
         type: jsPsychBrowserCheck,
-        data: url_vars
+        data: url_vars,
+        on_finish: function (data){
+            data.between_subj_condition = between_subj_condition
+            data.animation = ordered_iframes[procedure_idx].label
+            console.log(data.between_subj_condition, data.animation )
+        }
     };
 
     // theme colors
@@ -67,10 +72,6 @@
     const animation_presentation_time_seconds =  9*3
     const flash_duration_ms = 150
 
-    const iframe_dancer = ``
-    const iframe_train = ``
-    const iframe_lissaj = ``
-    const iframe_horse = ``
 
 
     let get_device_info = () => jsPsych.data.get().filter({trial_type: "browser-check"})['trials'][0]
@@ -84,11 +85,31 @@
     const  trian_aspect_rat = 500 / 322
 
 
-    // build trial sequence:
-    const intro_1 = {
+    const intro_0 = {
         type: jsPsychHtmlButtonResponse,
         stimulus: `<h2>Welkom!</h2>`+
-        'Je gaat zo naar een animatie kijken (voor ~30 sec).<br>Geeft de hele tijd aan welke bewegingsrichting jij ziet!',
+        '<p>Je krijgt eerst een korte explainer te zien en gaat dan zelf aan de slag!<br>(Tip: zorg alvast dat je geluid aan staat.)</p>',
+        choices: ["Bekijk de clip!"],
+        data:{
+            label:'intro_0',
+        }
+    };
+
+    // build trial sequence:
+    const intro_vid = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: () => pre_explainer_iframe.html,
+        choices: ["Verder!"],
+        prompt: "Ga verder na deze korte explainer!", 
+        enable_button_after: () => (pre_explainer_iframe.label == 'generic' ? 10_000 : 31_000),
+        on_finish: function (data) {
+            data.label = 'intro_'+pre_explainer_iframe.label
+        }
+    };
+    
+    const intro_1 = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: '<p>Je gaat zo naar een animatie kijken (voor ~30 sec).<br>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>',
         choices: ["Begin!"],
         data:{
             label:'intro',
@@ -398,25 +419,36 @@
             }
            
         },
-        // on_start: function(){
-        //     // write summary data to the first object
-        //     let summary_object = {}   
 
-        //     let n_trials = jsPsych.data.get().filter({label: 'ask_presence'}).count()
-        //     let n_correct = jsPsych.data.get().filter({label: 'ask_presence', correct:1}).count()
-            
-        //     summary_object.mean_accuracy = n_correct / n_trials
-
-        //     summary_object.mean_confidence = jsPsych.data.get().filter({label: 'ask_confidence'}).select('response').mean() 
-            
-
-        //     jsPsych.data.get().first(1).values()[0]['user_summary_info'] = summary_object
-        // },
     }
+
+    
+    // choose 1 of 3 between subj. options
+    const between_subj_condition = get_rand_from_array(['matching_exp', 'horse_exp', 'no_exp'])
+
+    // choose 1 of 3 animations to show
+    const procedure_idx = get_rand_int(0,2)
+    let vid_dims = [560, 315]
+    let vid_aspect = 560/315
+    let vid_width = Math.min(560, window.innerWidth*0.9)
+    let vid_height = vid_width / vid_aspect
+
+    const iframe_dancer  = {idx:0, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/rto4HMkKSzo?si=0aCwDRt6J_j2v-E9&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'dancer'}
+    const iframe_train   = {idx:1, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/7PQaWbE0Prg?si=TGvz5mABJBqn9-Tr&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'train'}
+    const iframe_lissaj  = {idx:2, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/onsKRjFW9Lk?si=4dk6wbLiiskzOwNq&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'lissaj'}
+    const iframe_horse   = {idx:3, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/mYBtmGPd0nw?si=p_HzDiOHY6s5npWT&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'horse'}
+    const iframe_generic = {idx:4, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/Ka2GX1vsWxo?si=rnNjWlI45ewCk2rc&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'generic'}
+   
+
+    const ordered_iframes = [iframe_dancer, iframe_train, iframe_lissaj]
+
+    // if horse exp 
+    let pre_explainer_iframe = between_subj_condition == 'horse_exp' ? iframe_horse : ordered_iframes[procedure_idx]
+    pre_explainer_iframe = between_subj_condition == 'no_exp' ? iframe_generic : pre_explainer_iframe
+    
+    
     
     // choose between pp procedure and preload required items
-    let procedure_idx = get_rand_int(0,2)
-
     let dancer_stims = ['animations/ambi_spinning_dancer.gif', 'animations/left_spinning_dancer.gif', 'animations/right_spinning_dancer.gif']
     let trian_stims = ['animations/ambi_train.gif']
     let lissaj_stims= ['animations/p5_lissajous.gif']
@@ -425,7 +457,9 @@
     let stims_to_preload = [dancer_stims,     trian_stims,     lissaj_stims    ][procedure_idx]
     let procedure        = [procedure_dancer, procedure_train, procedure_lissaj][procedure_idx]
 
-    let timeline = [user_info_trial, preload_with_call, procedure,  save_data, debrief]; 
+
+
+    let timeline = [user_info_trial, preload_with_call,intro_0, intro_vid, procedure,  save_data, debrief]; 
     jsPsych.run(timeline); 
 
 
