@@ -118,7 +118,7 @@
 
     const intro_2 = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: 'Bekijk de animatie nog eens en geef het opnieuw elke keer aan als je de richting ziet veranderen!',
+        stimulus: 'Bekijk de animatie nog eens en geef opnieuw de hele tijd aan welke bewegingsrichting jij ziet!!',
         choices: ["Begin!"],
         data:{
             label:'intro',
@@ -366,7 +366,11 @@
         response_ends_trial: false,
         render_on_canvas:false,
         initiate_stimulus_after: 1000,
-        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>"
+        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>",
+        // on_load: function () {
+        //     let buttonGroupElement = document.getElementById("jspsych-image-button-response-btngroup");
+        //     buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`
+        // }
     };
 
     let procedure_lissaj = {
