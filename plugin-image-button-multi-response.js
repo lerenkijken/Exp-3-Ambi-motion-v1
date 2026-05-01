@@ -252,7 +252,7 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
       } else if (trial.button_layout === "flex") {
         buttonGroupElement.classList.add("jspsych-btn-group-flex");
-      }
+      } 
       for (const [choiceIndex, choice] of trial.choices.entries()) {
         buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
         const buttonElement = buttonGroupElement.lastChild;

@@ -118,7 +118,7 @@
 
     const intro_2 = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: 'Bekijk de animatie nog eens en geef opnieuw de hele tijd aan welke bewegingsrichting jij ziet!!',
+        stimulus: 'Bekijk de animatie nog eens en geef opnieuw de hele tijd aan welke bewegingsrichting jij ziet!',
         choices: ["Begin!"],
         data:{
             label:'intro',
@@ -339,12 +339,16 @@
     let lissaj_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/p5_lissajous.gif',
-        choices:  [
-            '', '<b>↑</b> Omhoog <b>↑</b>', '', 
-            '<b>⤾</b> Linksom', '', 'Rechtsom <b>⤿</b>',
-            '', '<b>↓</b> Omlaag <b>↓</b>', '', 
+        // choices:  [ '<b>↑</b> Omhoog <b>↑</b>','<b>⤾</b> Linksom', 'Rechtsom <b>⤿</b>','<b>↓</b> Omlaag <b>↓</b>'],
+         choices: [
+            ''                , '<b>↑</b> Omhoog <b>↑</b>',          ''        , 
+            '<b>⤾</b> Linksom',           ''              , 'Rechtsom <b>⤿</b>',
+            ''                , '<b>↓</b> Omlaag <b>↓</b>',          ''        , 
         ], 
-        enabeled_buttons: [0,1,0,   1,0,1,   0,1,0],
+        enabeled_buttons: [
+            0,1,0,  
+            1,0,1,  
+            0,1,0],
         grid_rows: 3,
         grid_columns: 3,
         stimulus_height: () => {
@@ -369,16 +373,14 @@
         prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>",
         // on_load: function () {
         //     let buttonGroupElement = document.getElementById("jspsych-image-button-response-btngroup");
-        //     buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`
+        //     buttonGroupElement.style.gridTemplateColumns = `1f 1f 1f`
+        //     buttonGroupElement.style.gridTemplateRows    = `1f 1f 1f`
         // }
     };
 
     let procedure_lissaj = {
         timeline: [intro_1,  lissaj_trial_ambi, intro_2, lissaj_trial_ambi], 
     }
-
-
-
 
 
     const debrief = {
@@ -468,7 +470,7 @@
 
 
 
-    let timeline = [user_info_trial, preload_with_call,intro_0, intro_vid, procedure,  save_data, debrief]; 
+    let timeline = [user_info_trial, preload_with_call, intro_0, intro_vid, procedure,  save_data, debrief]; 
     jsPsych.run(timeline); 
 
 

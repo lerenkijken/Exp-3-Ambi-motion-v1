@@ -27,13 +27,29 @@ html, body {
     border-radius: 16px;
     color: white;
     background-color: #2b00c8d0;
-    padding: 0.6em 1.2em;
+    padding: 0.6em 0.6em;
     font-family: Malington;
     -webkit-user-select: none; /* Safari */
             user-select: none; 
     box-shadow: 0 0.4em #7e7e7e;
     transition: 0.05s;
 }
+
+
+.jspsych-btn-group-grid {
+  display: grid;
+  grid-auto-columns: max-content;
+  max-width: fit-content;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+
+
+
+
+
+
 
 @media (hover: hover) {
   .jspsych-btn:hover {
