@@ -22,12 +22,12 @@ html, body {
 }
 
 .jspsych-btn {
-    /* font-size: 30px; */
+    font-size: large;
+    padding: 0.4em 0.9em;
     border: 10px solid transparent;
     border-radius: 16px;
     color: white;
     background-color: #2b00c8d0;
-    padding: 0.6em 1.2em;
     font-family: Malington;
     -webkit-user-select: none; /* Safari */
             user-select: none; 
