@@ -39,7 +39,7 @@
     });
 
     
-    let exp_version = '0_3_0'
+    let exp_version = '0_3_1'
     const exp_id = 'exp_3_v'+exp_version
     console.log("Exp id: ", exp_id)
     
@@ -440,16 +440,21 @@
     const iframe_dancer  = {idx:0, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/rto4HMkKSzo?si=0aCwDRt6J_j2v-E9&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'dancer'}
     const iframe_train   = {idx:1, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/7PQaWbE0Prg?si=TGvz5mABJBqn9-Tr&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'train'}
     const iframe_lissaj  = {idx:2, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/onsKRjFW9Lk?si=4dk6wbLiiskzOwNq&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'lissaj'}
-    const iframe_horse   = {idx:3, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/mYBtmGPd0nw?si=p_HzDiOHY6s5npWT&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'horse'}
+    const iframe_horse   = {idx:3, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/rS_iddC-hJM?si=NjlSFl16caOKYvGP&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'horse'}
     const iframe_generic = {idx:4, html:`<iframe width="${vid_width}" height="${vid_height}" src="https://www.youtube.com/embed/Ka2GX1vsWxo?si=rnNjWlI45ewCk2rc&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`, label: 'generic'}
    
 
     const ordered_iframes = [iframe_dancer, iframe_train, iframe_lissaj]
 
-    // if horse exp 
-    let pre_explainer_iframe = between_subj_condition == 'horse_exp' ? iframe_horse : ordered_iframes[procedure_idx]
-    pre_explainer_iframe = between_subj_condition == 'no_exp' ? iframe_generic : pre_explainer_iframe
-    
+    // assume matching condition
+    let pre_explainer_iframe = ordered_iframes[procedure_idx]
+
+    if (between_subj_condition == 'horse_exp') {
+        pre_explainer_iframe =  iframe_horse
+    }
+    if (between_subj_condition == 'no_exp') {
+        pre_explainer_iframe =  iframe_generic
+    }
     
     
     // choose between pp procedure and preload required items
