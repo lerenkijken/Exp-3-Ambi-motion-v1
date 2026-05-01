@@ -39,7 +39,7 @@
     });
 
     
-    let exp_version = '0_3_1'
+    let exp_version = '0_4_0'
     const exp_id = 'exp_3_v'+exp_version
     console.log("Exp id: ", exp_id)
     
@@ -100,8 +100,8 @@
         type: jsPsychHtmlButtonResponse,
         stimulus: () => pre_explainer_iframe.html,
         choices: ["Verder!"],
-        prompt: "Ga verder na deze korte explainer!", 
-        enable_button_after: () => (pre_explainer_iframe.label == 'generic' ? 10_000 : 31_000),
+        prompt: "Start de video en ga verder na deze korte explainer!", 
+        enable_button_after: () => (pre_explainer_iframe.label == 'generic' ? 13_000 : 34_000),
         on_finish: function (data) {
             data.label = 'intro_'+pre_explainer_iframe.label
         }
@@ -258,7 +258,7 @@
         response_ends_trial: false,
         render_on_canvas:false,
         initiate_stimulus_after: 1000,
-        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>"
+        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij <i>NU</i> ziet!</p>"
     };
 
     let dancer_trial_disambi_partial = (dir) => {return {
@@ -283,7 +283,7 @@
         trial_duration:  (animation_presentation_time_seconds / 3)   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
-        prompt: "Geeft de hele tijd aan welke bewegingsrichting jij ziet!"
+        prompt: "Geeft de hele tijd aan welke bewegingsrichting jij <i>NU</i> ziet!"
     }};
 
     let dancer_trial_disambi_LRL = [dancer_trial_disambi_partial('left'), dancer_trial_disambi_partial('right'), dancer_trial_disambi_partial('left')] 
@@ -329,7 +329,7 @@
         response_ends_trial: false,
         render_on_canvas:false,
         initiate_stimulus_after: 1000,
-        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>"
+        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij <i>NU</i> ziet!</p>"
     };
 
     let procedure_train = {
@@ -339,18 +339,18 @@
     let lissaj_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/p5_lissajous.gif',
-        // choices:  [ '<b>↑</b> Omhoog <b>↑</b>','<b>⤾</b> Linksom', 'Rechtsom <b>⤿</b>','<b>↓</b> Omlaag <b>↓</b>'],
-         choices: [
-            ''                , '<b>↑</b> Omhoog <b>↑</b>',          ''        , 
-            '<b>⤾</b> Linksom',           ''              , 'Rechtsom <b>⤿</b>',
-            ''                , '<b>↓</b> Omlaag <b>↓</b>',          ''        , 
-        ], 
-        enabeled_buttons: [
-            0,1,0,  
-            1,0,1,  
-            0,1,0],
-        grid_rows: 3,
-        grid_columns: 3,
+        choices:  [ '<b>↑</b> Omhoog <b>↑</b>','<b>⤾</b> Linksom', 'Rechtsom <b>⤿</b>','<b>↓</b> Omlaag <b>↓</b>'],
+        //  choices: [
+        //     ''                , '<b>↑</b> Omhoog <b>↑</b>',          ''        , 
+        //     '<b>⤾</b> Linksom',           ''              , 'Rechtsom <b>⤿</b>',
+        //     ''                , '<b>↓</b> Omlaag <b>↓</b>',          ''        , 
+        // ], 
+        // enabeled_buttons: [
+        //     0,1,0,  
+        //     1,0,1,  
+        //     0,1,0],
+        // grid_rows: 3,
+        // grid_columns: 3,
         stimulus_height: () => {
            if (  (get_device_info().width /  get_device_info().height) > trian_aspect_rat ) {
             return  get_device_info().height * 0.4
@@ -365,18 +365,31 @@
             return get_device_info().width * 0.75
            }
         },
-        stimulus_duration: animation_presentation_time_seconds   *1000,
-        trial_duration:  animation_presentation_time_seconds   *1000,
+        // stimulus_duration: animation_presentation_time_seconds   *1000,
+        // trial_duration:  animation_presentation_time_seconds   *1000,
         response_ends_trial: false,
         render_on_canvas:false,
         initiate_stimulus_after: 1000,
-        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij ziet!</p>",
-        // on_load: function () {
-        //     let buttonGroupElement = document.getElementById("jspsych-image-button-response-btngroup");
-        //     buttonGroupElement.style.gridTemplateColumns = `1f 1f 1f`
-        //     buttonGroupElement.style.gridTemplateRows    = `1f 1f 1f`
-        // }
+        prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij <i>NU</i> ziet!</p>",
+        on_load: function () {
+        document.getElementById("jspsych-image-button-response-btngroup").outerHTML = `
+            <div id="jspsych-image-button-response-btngroup" class="jspsych-btn-group-grid">
+                <p>
+                    <button class="jspsych-btn" data-choice="0" style="user-select: none; margin:0.3em; padding:0.3em 1.2em"><b>↑</b> Omhoog <b>↑</b></button>      <br>
+                    <button class="jspsych-btn" data-choice="1" style="user-select: none; margin:0.3em; padding:0.3em 1.2em"><b>⤾</b> Linksom</button>&nbsp;&nbsp;
+                    <button class="jspsych-btn" data-choice="2" style="user-select: none; margin:0.3em; padding:0.3em 1.2em">Rechtsom <b>⤿</b></button>             <br>
+                    <button class="jspsych-btn" data-choice="3" style="user-select: none; margin:0.3em; padding:0.3em 1.2em"><b>↓</b> Omlaag <b>↓</b></button>
+                </p>
+            </div>
+        `
+        }
     };
+
+
+
+
+
+
 
     let procedure_lissaj = {
         timeline: [intro_1,  lissaj_trial_ambi, intro_2, lissaj_trial_ambi], 

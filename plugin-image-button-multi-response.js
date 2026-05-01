@@ -239,20 +239,31 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
       display_element.appendChild(stimulusElement);
       const buttonGroupElement = document.createElement("div");
       buttonGroupElement.id = "jspsych-image-button-response-btngroup";
+
+
       if (trial.button_layout === "grid") {
         buttonGroupElement.classList.add("jspsych-btn-group-grid");
+
         if (trial.grid_rows === null && trial.grid_columns === null) {
           throw new Error(
             "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
           );
         }
+
         const n_cols = trial.grid_columns === null ? Math.ceil(trial.choices.length / trial.grid_rows) : trial.grid_columns;
         const n_rows = trial.grid_rows === null ? Math.ceil(trial.choices.length / trial.grid_columns) : trial.grid_rows;
+        
         buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
         buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
+
+
+
       } else if (trial.button_layout === "flex") {
         buttonGroupElement.classList.add("jspsych-btn-group-flex");
       } 
+
+
+
       for (const [choiceIndex, choice] of trial.choices.entries()) {
         buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
         const buttonElement = buttonGroupElement.lastChild;
@@ -263,6 +274,8 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         buttonElement.style.userSelect = 'none'; 
         
       }
+
+
       display_element.appendChild(buttonGroupElement);
       if (trial.prompt !== null) {
         display_element.insertAdjacentHTML("beforeend", trial.prompt);
