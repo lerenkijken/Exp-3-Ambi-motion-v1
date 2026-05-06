@@ -271,6 +271,16 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         buttonElement.addEventListener("mousedown", () => {  // use 'mousedown' to get the start time of the response. "click" fires after a "full click action" . 
           after_response(choiceIndex);
         });
+
+        buttonElement.addEventListener("touchstart", () => {  
+          buttonElement.style.boxShadow = '0 0.1em #444444'
+          buttonElement.style.transform = 'translateY(0.3em)'
+        });
+        buttonElement.addEventListener("touchend", () => { 
+          buttonElement.style.boxShadow = '0 0.4em #7e7e7e'
+          buttonElement.style.transform = 'translateY(0em)'
+        });
+
         buttonElement.style.userSelect = 'none'; 
         
       }

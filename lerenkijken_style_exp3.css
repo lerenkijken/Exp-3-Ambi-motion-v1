@@ -82,6 +82,7 @@ html, body {
   transition: 0.05s;
 }
 
+
 .jspsych-slider::-webkit-slider-thumb {
     border: 10px solid #2b00c8;
     height: 80px;
