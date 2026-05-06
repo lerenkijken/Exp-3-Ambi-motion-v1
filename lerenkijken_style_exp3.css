@@ -28,6 +28,7 @@ html, body {
     border-radius: 16px;
     color: white;
     background-color: #2b00c8d0;
+    border-color: #2b00c800;
     font-family: Malington;
     -webkit-user-select: none; /* Safari */
             user-select: none; 
