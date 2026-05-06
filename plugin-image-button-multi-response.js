@@ -275,16 +275,26 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
         buttonElement.addEventListener("touchstart", () => {  
           buttonElement.style.boxShadow = '0 0.1em #444444'
           buttonElement.style.transform = 'translateY(0.3em)'
+          buttonElement.style.backgroundColor = '2b00c8'
         });
-        buttonElement.addEventListener("touchend", () => { 
-          buttonElement.style.boxShadow = '0 0.4em #7e7e7e'
-          buttonElement.style.transform = 'translateY(0em)'
-        });
+        // buttonElement.addEventListener("touchend", () => { 
+        //   buttonElement.style.boxShadow = '0 0.4em #7e7e7e'
+        //   buttonElement.style.transform = 'translateY(0em)'
+        //   buttonElement.style.color = '#2b00c8d0'
+        // });
 
         buttonElement.style.userSelect = 'none'; 
         
       }
-
+      
+      document.addEventListener("touchend", () => { 
+        let buttonGroupElement =  document.getElementById("jspsych-image-button-response-btngroup")
+        for (const buttonElement of buttonGroupElement.children) {
+          buttonElement.style.boxShadow = '0 0.4em #7e7e7e'
+          buttonElement.style.transform = 'translateY(0em)'
+          buttonElement.style.backgroundColor = '#2b00c8d0'
+        };
+      })
 
       display_element.appendChild(buttonGroupElement);
       if (trial.prompt !== null) {
