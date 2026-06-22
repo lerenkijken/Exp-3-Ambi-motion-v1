@@ -285,11 +285,15 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
       
       document.addEventListener("touchend", () => { 
         let buttonGroupElement =  document.getElementById("jspsych-image-button-response-btngroup")
+        let btn_idx = 0
         for (const buttonElement of buttonGroupElement.children) {
-          buttonElement.style.boxShadow = '0 0.4em #7e7e7e'
-          buttonElement.style.transform = 'translateY(0em)'
-          buttonElement.style.backgroundColor = '#2b00c8d0'
-          buttonElement.style.borderColor = '#ffffff00'
+          if ((trial.enabeled_buttons == null) || trial.enabeled_buttons[btn_idx] ) {
+            buttonElement.style.boxShadow = '0 0.4em #7e7e7e'
+            buttonElement.style.transform = 'translateY(0em)'
+            buttonElement.style.backgroundColor = '#2b00c8d0'
+            buttonElement.style.borderColor = '#ffffff00'
+          }
+          btn_idx++
         };
       })
 
