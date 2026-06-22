@@ -263,7 +263,7 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
       } 
 
 
-
+      let btn_idx = 0
       for (const [choiceIndex, choice] of trial.choices.entries()) {
 
 
@@ -275,7 +275,7 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
           after_response(choiceIndex);
         });
 
-        if ((trial.enabeled_buttons == null) || trial.enabeled_buttons[choiceIndex] ) {
+        if ((trial.enabeled_buttons == null) || trial.enabeled_buttons[btn_idx] ) {
           buttonElement.addEventListener("touchstart", () => {  
             buttonElement.style.boxShadow = '0 0.1em #444444'
             buttonElement.style.transform = 'translateY(0.3em)'
@@ -283,6 +283,7 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
             buttonElement.style.borderColor = '#ffffff00'
           });
         }
+        btn_idx++
         buttonElement.style.userSelect = 'none'; 
         
       }
