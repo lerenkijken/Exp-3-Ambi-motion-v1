@@ -265,6 +265,9 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
 
 
       for (const [choiceIndex, choice] of trial.choices.entries()) {
+
+
+        
         buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
         const buttonElement = buttonGroupElement.lastChild;
         buttonElement.dataset.choice = choiceIndex.toString();
@@ -272,13 +275,14 @@ var jsPsychImageButtonMultiResponse = (function (jspsych) {
           after_response(choiceIndex);
         });
 
-        buttonElement.addEventListener("touchstart", () => {  
-          buttonElement.style.boxShadow = '0 0.1em #444444'
-          buttonElement.style.transform = 'translateY(0.3em)'
-          buttonElement.style.backgroundColor = '#2b00c8'
-          buttonElement.style.borderColor = '#ffffff00'
-        });
-
+        if ((trial.enabeled_buttons == null) || trial.enabeled_buttons[choiceIndex] ) {
+          buttonElement.addEventListener("touchstart", () => {  
+            buttonElement.style.boxShadow = '0 0.1em #444444'
+            buttonElement.style.transform = 'translateY(0.3em)'
+            buttonElement.style.backgroundColor = '#2b00c8'
+            buttonElement.style.borderColor = '#ffffff00'
+          });
+        }
         buttonElement.style.userSelect = 'none'; 
         
       }
