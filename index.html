@@ -41,7 +41,7 @@
     });
 
     
-    let exp_version = '1_0_5'
+    let exp_version = '1_1_0'
     const exp_id = 'exp_3_v'+exp_version
     console.log("Exp id: ", exp_id)
     
@@ -341,7 +341,9 @@
     let lissaj_trial_ambi = {
         type: jsPsychImageButtonMultiResponse,
         stimulus: 'animations/p5_lissajous.gif',
-        choices:  [ '<b>↑</b> Omhoog <b>↑</b>','<b>⤾</b> Linksom', 'Rechtsom <b>⤿</b>','<b>↓</b> Omlaag <b>↓</b>'],
+        choices:  [ '', '<b>↑</b> Omhoog <b>↑</b>','','<b>⤾</b> Linksom', '','Rechtsom <b>⤿</b>','','<b>↓</b> Omlaag <b>↓</b>', ''],
+        grid_rows:3,
+        enabeled_buttons: [0,1,0,  1,0,1,  0,1,0],
         stimulus_height: () => {
            if (  (get_device_info().width /  get_device_info().height) > trian_aspect_rat ) {
             return  get_device_info().height * 0.4
@@ -363,16 +365,18 @@
         initiate_stimulus_after: 1000,
         prompt: "<p>Geeft de hele tijd aan welke bewegingsrichting jij <i>NU</i> ziet!</p>",
         on_load: function () {
-            document.getElementById("jspsych-image-button-response-btngroup").outerHTML = `
-                <div id="jspsych-image-button-response-btngroup" class="jspsych-btn-group-grid">
-                    <p>
-                        <button class="jspsych-btn" data-choice="0" style="user-select: none; margin:0.3em; padding:0.3em 0.7em"><b>↑</b> Omhoog <b>↑</b></button>      <br>
-                        <button class="jspsych-btn" data-choice="1" style="user-select: none; margin:0.3em; padding:0.3em 0.7em"><b>⤾</b> Linksom</button>&nbsp;
-                        <button class="jspsych-btn" data-choice="2" style="user-select: none; margin:0.3em; padding:0.3em 0.7em">Rechtsom <b>⤿</b></button>             <br>
-                        <button class="jspsych-btn" data-choice="3" style="user-select: none; margin:0.3em; padding:0.3em 0.7em"><b>↓</b> Omlaag <b>↓</b></button>
-                    </p>
-                </div>
-                `
+            // let button_els = document.getElementById("jspsych-image-button-response-btngroup")
+
+            // document.getElementById("jspsych-image-button-response-btngroup").outerHTML = `
+            //     <div id="jspsych-image-button-response-btngroup" class="jspsych-btn-group-grid">
+            //         <p>
+            //             <button class="jspsych-btn" data-choice="0" style="user-select: none; margin:0.3em; padding:0.3em 0.7em"><b>↑</b> Omhoog <b>↑</b></button>      <br>
+            //             <button class="jspsych-btn" data-choice="1" style="user-select: none; margin:0.3em; padding:0.3em 0.7em"><b>⤾</b> Linksom</button>&nbsp;
+            //             <button class="jspsych-btn" data-choice="2" style="user-select: none; margin:0.3em; padding:0.3em 0.7em">Rechtsom <b>⤿</b></button>             <br>
+            //             <button class="jspsych-btn" data-choice="3" style="user-select: none; margin:0.3em; padding:0.3em 0.7em"><b>↓</b> Omlaag <b>↓</b></button>
+            //         </p>
+            //     </div>
+            //     `
             
         }
     };
@@ -475,7 +479,9 @@
 
 
 
-    let timeline = [user_info_trial, preload_with_call, intro_0, intro_vid, procedure,  save_data, debrief]; 
+    let timeline = [user_info_trial, 
+    procedure_lissaj,
+     preload_with_call, intro_0, intro_vid, procedure,  save_data, debrief]; 
     jsPsych.run(timeline); 
 
 
